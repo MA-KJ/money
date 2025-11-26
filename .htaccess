@@ -1,0 +1,49 @@
+# Apache configuration for Loan Tracking System
+# Enables clean URLs and security settings
+
+# Enable Rewrite Engine
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    
+    # Prevent direct access to includes folder
+    RewriteRule ^includes/ - [F,L]
+    
+    # Prevent direct access to logs folder
+    RewriteRule ^logs/ - [F,L]
+    
+    # Redirect to HTTPS (optional - uncomment if you have SSL)
+    # RewriteCond %{HTTPS} off
+    # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# Security Headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# Prevent directory listing
+Options -Indexes
+
+# Protect sensitive files
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# PHP Security Settings
+<IfModule mod_php7.c>
+    php_flag display_errors Off
+    php_flag log_errors On
+    php_value error_log logs/php_errors.log
+</IfModule>
+
+# Set default charset
+AddDefaultCharset UTF-8
+
+# GZIP Compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>
